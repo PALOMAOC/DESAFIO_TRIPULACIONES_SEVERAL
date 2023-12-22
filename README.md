@@ -18,7 +18,7 @@ Directorios en este repositorio:
 
 * [Tabla Operativa](#tabla-operativa)
 
-* [Problematica](#)
+* [Problematica](#problematica)
 
 * [Propuesta Web](#propuesta-web)
 
