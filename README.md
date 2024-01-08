@@ -26,21 +26,27 @@ Directorios en este repositorio:
 # Flujo de Trabajo Actual
 ---
 
-En la actualidad, la calculadora comparativa se basa en un archivo XLMS sin dependencias externas ni enlaces. Todos los datos y fórmulas se encuentran dentro del archivo y se actualizan con archivos auxiliares. La actualización es hecha esporádicamente reflejando los cambios de las comercializadoras y periódicamente con los datos del ERP.
+En la actualidad, la calculadora comparativa se basa en un archivo XLMS sin dependencias externas ni enlaces. Todos los datos y fórmulas se encuentran dentro del archivo y se actualizan con archivos auxiliares. La actualización es hecha esporádicamente reflejando los cambios de las comercializadoras y periódicamente con los datos del ERP (Enterprise Resource Planning).
 
 <img src=".img/FLOW.png" alt="Alt text" width="800" height="">
 
 ### 1. Operativo
 
-Este directorio proporciona acceso al operador del [workbook de estudios](Operativo\SEVERAL\ESTUDIOPERSONALIZADO_SEVERAL_USUARIO_17.10.23.xlsx). Esta persona es responsable de operar diariamente los workbooks de estudios y de actualizar el archivo [PRECIOS LUZ](Operativo\PRECIOS_LUZ.xlsx) una vez llega la notificacion de la comercializadora. Estos datos se utilizan posteriormente para la actualización manual de la calculadora. El archivo [USUARIOS_EMAIL_ACTIVOS](Operativo\USUARIOS__EMAIL_ACTIVOS.xlsx) también sirve como referencia para la actualización del workbook, y se actualiza semanalmente con los datos del ERP.
+Este es el directorio de acceso de los operadores del [workbook de estudios](Operativo\ESTUDIOPERSONALIZADO_SEVERAL_LUZ.xlsx). Esta persona es responsable de operar diariamente los workbooks y de actualizar el archivo [PRECIOS LUZ](Operativo\PRECIOS_LUZ.xlsx) una vez llega la notificacion de la comercializadora. Estos datos se utilizan posteriormente para la actualización manual de la calculadora. El archivo [USUARIOS_EMAIL_ACTIVOS](Operativo\USUARIOS__EMAIL_ACTIVOS.xlsx) también sirve como referencia para la actualización del workbook, y se actualiza diariamente con los datos del ERP.
 
 Todos los estudios se almacenan en un sharepoint al final del dia para posterior reporte [ESTUDIOS PDF](Operativo\ESTUDIOS_PDF).
 
 ### 2. Base de Datos
 
-Semanalmente, accedemos a la API del ERP a través de un script de Python y descargamos y procesamos la base de datos con los estados actuales de las operaciones. Este proceso también incluye la incorporación de nuevos usuarios en [USUARIOS_EMAIL_ACTIVOS](Operativo\USUARIOS__EMAIL_ACTIVOS.xlsx). Además incorporamos datos SIPs con un webscraping a la intranet de candela (este proceso aun tiene limitaciones). Los datos dispuestos son: [id_erp', 'concepto_tarifa_strip', 'consumo_erp',
+Diariamente, accedemos a la API del ERP y descargamos y procesamos la base de datos con los estados actuales de las operaciones. Este proceso también incluye la incorporación de nuevos usuarios en [USUARIOS_EMAIL_ACTIVOS](Operativo\USUARIOS__EMAIL_ACTIVOS.xlsx). Además incorporamos datos SIPs con un webscraping a la intranet de candela (este proceso aun tiene limitaciones). 
+Los datos dispuestos son: 
+
+erp:  ['id_erp', 'concepto_tarifa_strip', 'consumo_erp',
        'cups20', 'fecha_ed', 'nodo', 'direccion', 'cp', 'poblacion',
-       'provincia', 'tarifa_erp', 'tipo', 'comercial', 'equipo', 'CNAE',
+       'provincia', 'tarifa_erp', 'tipo', 'comercial', 'equipo'] 
+       
+
+sips: ['CNAE',
        'Codigo Autoconsumo', 'Codigo TensionV', 'Consumo_sips',
        'Consumo Anual P1', 'Consumo Anual P2', 'Consumo Anual P3',
        'Consumo Anual P4', 'Consumo Anual P5', 'Consumo Anual P6',
@@ -51,14 +57,14 @@ Semanalmente, accedemos a la API del ERP a través de un script de Python y desc
 
 ### 3. Reporte 
 
-Cada semana se actualiza el [reporte](Reporte\reporte_estudios.xlsx) de los estudios mediante la ejecución de un [script](Reporte\reading_pdf_reporting_estudios.ipynb) en Python, que realiza las siguientes tareas:
+Cada nueva propuesta cargada en el sharepoint se actualiza el [reporte](\Reporte) de los estudios mediante la ejecución de [funciones](Reporte) en Python, que realiza las siguientes tareas:
 
 - Extrae información de los estudios en formato PDF y la transfiere a un dataframe de Pandas.
-- Recopila información de la base de datos del CRM.
+- Recopila información de la base de datos del ERP.
 - Integra ambos conjuntos de datos.
-- Exporta los datos procesados a un archivo de Excel.
+- Exporta los datos procesados a un archivo de csv.
 
-Este archivo Excel se importa a [PowerBi](Reporte\Reporte_Estudios_comparativos.pbix) para su análisis gráfico en el panel de control.
+Este archivo csv se importa a [PowerBi](Reporte\Reporte_Estudios_comparativos.pbix) para su análisis gráfico en el panel de control.
 
 # Tabla Operativa
 ---
@@ -107,9 +113,10 @@ Una vez que se define la oferta, se genera la propuesta en formato PDF.
 
 
  En esta versión, para obtener el PDF, es necesario navegar hasta la hoja de la tarifa correspondiente al tipo de propuesta que se desea presentar.  Existe una versión con la impresión automática configurada mediante una macro que se activa a través de un botón, pero no es compatible con la versión web.
+
 # Problematica
 
-Aunque el workbook sea 100% funcional en las operaciones internas del backoffice con las aplicaciones Windows 360 en cuenta paga, se han identificado limitaciones con el uso externo. En la app web por ejemplo no funciona algunas macros y se desconfigura los ajustes de páginas, ya en la app desktop algunas fórmulas no resultan compatibles con determinadas versiones de la aplicacion excel.
+Aunque el workbook sea 100% funcional en las operaciones internas del backoffice con las aplicaciones Windows 365 en cuenta paga, se han identificado limitaciones con el uso externo. En la app web por ejemplo no funciona algunas macros y se desconfigura los ajustes de páginas, ya en la app desktop algunas fórmulas no resultan compatibles con determinadas versiones de la aplicacion excel.
 
 La creciente demanda de uso tambien ha suscitado la necesidad de virtualizar y automatizar todo lo que sea posible para ahorrar tiempo de generación de propuesta.
 
